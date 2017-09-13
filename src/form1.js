@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import Form from 'react-jsonschema-form';
 import * as FormInput from './form1Schema';
+// eslint-disable-next-line
+var jsonQ=require("jsonq");
 
 class FormOne extends Component {
 
   constructor(props){
     super(props);
+    this.state = {
+      formData: {},
+      schema: FormInput.schema,
+      uiSchema: FormInput.uiSchema,
+    }
     this.onFormChange = this.onFormChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.onFormError = this.onFormError.bind(this);
@@ -13,21 +20,32 @@ class FormOne extends Component {
   }
 
   componentWillMount(){
-    const parentDrop = Object.assign({}, FormInput.schema.properties.parentDrop, FormInput.lookUps.parentDropEnum );
-    const properties = Object.assign({},FormInput.schema.properties,{parentDrop});
-    // const updatedSchema = FormInput.updateJson(FormInput.schema, 'parentDrop', FormInput.lookUps.parentDropEnum);
-    this.setState({
-      schema: Object.assign({}, FormInput.schema, {properties}), //updatedSchema,
-      uiSchema: FormInput.uiSchema,
-      formData: { name: 'You' },
-    });
+    // const FormType = Object.assign({}, FormInput.schema.properties.FormType, FormInput.lookUps.FormTypeEnum );
+    // const properties = Object.assign({},FormInput.schema.properties,{FormType});
+    // // const updatedSchema = FormInput.updateJson(FormInput.schema, 'FormType', FormInput.lookUps.FormTypeEnum);
+    // this.setState({
+    //   schema: Object.assign({}, FormInput.schema, {properties}), //updatedSchema,
+    //   uiSchema: FormInput.uiSchema,
+    //   formData: { name: 'You' },
+    // });
   }
 
   onFormChange(form){
-    const childDropEnum = form.formData.parentDrop === 'odd' ? FormInput.lookUps.oddEnum : FormInput.lookUps.evenEnum;
+    let CaseTypeEnum = '';
+    switch (form.formData.FormType) {
+      case 'RG':
+        CaseTypeEnum = FormInput.schema.definitions.CaseType.regular;
+        break;
+      case 'GH':
+        CaseTypeEnum = FormInput.schema.definitions.CaseType.glasshouse;
+        break;
+      case 'PP':
+        CaseTypeEnum = FormInput.schema.definitions.CaseType.partnerProduct;
+        break;
+    }
     const formData = form.formData;
-    const childDrop = Object.assign({}, form.schema.properties.childDrop, childDropEnum );
-    const properties = Object.assign({},form.schema.properties,{childDrop});
+    const CaseType = Object.assign({}, form.schema.properties.CaseType, CaseTypeEnum );
+    const properties = Object.assign({},form.schema.properties,{CaseType});
     const schema = Object.assign({}, form.schema, {properties});
     this.setState({ formData, schema });
   }
@@ -35,7 +53,7 @@ class FormOne extends Component {
   onFormSubmit(form){
     this.setState({
       formData: Object.assign(
-        {}, form.formData, { submitted: form.formData.name + ' submitted ' + form.formData.childDrop}
+        {}, form.formData, { submitted: form.formData.name + ' submitted ' + form.formData.CaseType}
       )
     });
   }

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "jsonq": "^1.1.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-jsonschema-form": "^0.49.0"
