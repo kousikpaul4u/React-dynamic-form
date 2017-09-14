@@ -1,12 +1,20 @@
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import React from 'react';
+
 export const schema = {
     definitions: {
+      FieldTypes: [
+          "CaseType"
+      ],
       CaseFormType: {
         type: 'string',
         title: 'Case Form Type',
         enum: [
-          'RG',
-          'GH',
-          'pp',
+          'regular',
+          'glasshouse',
+          'partnerProduct',
         ],
         enumNames: [
           'Regular',
@@ -68,6 +76,11 @@ export const schema = {
         title: "Case ID", 
         default: "Enter Case ID"
       },
+      abc: {
+        type: "string", 
+        title: "Case ID", 
+        default: "Enter Case ID"
+      },
       FormType: {
         type: "string",
         title: "Form Type", 
@@ -99,18 +112,58 @@ export const schema = {
 };
 export const uiSchema =  {
   "ui:disabled": true,
-  "ui:autofocus": true
-};
-
-export const updateJson = function(object, value, updateValue) {
-  for (var x in object) {
-    if (typeof object[x] === 'object') {
-      updateJson(object[x], value);
-    }
-    if(x === value) {
-      console.log(x);
-      console.log(object[x]);
-      object[x] = Object.assign({}, object[x], updateJson(object[x]));
+  "ui:autofocus": true,
+  name: {
+    "ui:widget": (props) => {
+      console.log('Props: ', props);
+      return (
+        <TextField
+            onChange={(event) => props.onChange(event.target.value)}
+        />
+      );
+    },
+  },
+  FormType: {
+    "ui:widget": (props) => {
+      console.log('Props: ', props);
+      return (
+        <SelectField
+          onChange={(event) => props.onChange(event.target.value)}
+        >
+        {
+          arrangeEnum(props).map((menu) =>
+          <MenuItem value={menu.value} primaryText={menu.text}/>)
+        }
+        </SelectField>
+      );
     }
   }
+};
+
+export const updateJson = function(object, value, key) {
+  for (var x in object) {
+    if (typeof object[x] === 'object') {
+      if (x === key) {
+        console.log(x);
+        console.log(object[x]);
+        object[x] = Object.assign({}, object[x], updateJson(object[x]));
+      } else {
+        updateJson(object[x], value);
+      }
+    } else {
+      updateJson(object[x], value);
+    }
+  }
+}
+
+export const arrangeEnum = function(props) {
+  let selectValsarr = [];
+    for(let i = 0; i < props.schema.enum.length; i++) {
+      const obj = {
+        value: props.schema.enum[i],
+        text: props.schema.enumNames[i],
+      }
+      selectValsarr.push(obj);
+    }
+  return selectValsarr;
 }

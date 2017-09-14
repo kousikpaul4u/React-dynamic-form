@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Form from 'react-jsonschema-form';
 import * as FormInput from './form1Schema';
-// eslint-disable-next-line
-var jsonQ=require("jsonq");
 
 class FormOne extends Component {
 
@@ -19,35 +17,17 @@ class FormOne extends Component {
     this.edit = this.edit.bind(this);
   }
 
-  componentWillMount(){
-    // const FormType = Object.assign({}, FormInput.schema.properties.FormType, FormInput.lookUps.FormTypeEnum );
-    // const properties = Object.assign({},FormInput.schema.properties,{FormType});
-    // // const updatedSchema = FormInput.updateJson(FormInput.schema, 'FormType', FormInput.lookUps.FormTypeEnum);
-    // this.setState({
-    //   schema: Object.assign({}, FormInput.schema, {properties}), //updatedSchema,
-    //   uiSchema: FormInput.uiSchema,
-    //   formData: { name: 'You' },
-    // });
-  }
-
   onFormChange(form){
-    let CaseTypeEnum = '';
-    switch (form.formData.FormType) {
-      case 'RG':
-        CaseTypeEnum = FormInput.schema.definitions.CaseType.regular;
-        break;
-      case 'GH':
-        CaseTypeEnum = FormInput.schema.definitions.CaseType.glasshouse;
-        break;
-      case 'PP':
-        CaseTypeEnum = FormInput.schema.definitions.CaseType.partnerProduct;
-        break;
-    }
     const formData = form.formData;
-    const CaseType = Object.assign({}, form.schema.properties.CaseType, CaseTypeEnum );
-    const properties = Object.assign({},form.schema.properties,{CaseType});
-    const schema = Object.assign({}, form.schema, {properties});
+    let fieldName, properties, schema;
+    FormInput.schema.definitions.FieldTypes.forEach(function(field) {
+      let FieldTypeEnum = FormInput.schema.definitions[field][form.formData.FormType];
+      fieldName = Object.assign({}, form.schema.properties[field], FieldTypeEnum );
+      properties = Object.assign({},form.schema.properties, { [field]: fieldName });
+      schema = Object.assign({}, form.schema, {properties});
+    }, this);
     this.setState({ formData, schema });
+    // const tmp = FormInput.updateJson(form.schema, CaseTypeEnum, 'CaseType');
   }
 
   onFormSubmit(form){
