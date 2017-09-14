@@ -76,11 +76,6 @@ export const schema = {
         title: "Case ID", 
         default: "Enter Case ID"
       },
-      abc: {
-        type: "string", 
-        title: "Case ID", 
-        default: "Enter Case ID"
-      },
       FormType: {
         type: "string",
         title: "Form Type", 
@@ -128,7 +123,8 @@ export const uiSchema =  {
       console.log('Props: ', props);
       return (
         <SelectField
-          onChange={(event) => props.onChange(event.target.value)}
+          value={props.value}
+          onChange={(event, index, value)=> props.onChange(value)}
         >
         {
           arrangeEnum(props).map((menu) =>
